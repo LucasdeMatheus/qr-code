@@ -59,7 +59,7 @@ public class QRCodeService {
         // Gerar o QR Code como BitMatrix
         BitMatrix bitMatrix = new MultiFormatWriter().encode(content, BarcodeFormat.QR_CODE, width, height, hintMap);
 
-        // Criar uma imagem a partir do BitMatrix
+        // Criar uma imagem docker-compose.yml partir do BitMatrix
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         image.createGraphics();
         Graphics2D graphics = (Graphics2D) image.getGraphics();
@@ -77,7 +77,7 @@ public class QRCodeService {
         }
 
 
-        // Converter a imagem para um array de bytes
+        // Converter docker-compose.yml imagem para um array de bytes
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ImageIO.write(image, "PNG", baos);
 
@@ -158,7 +158,7 @@ public class QRCodeService {
 
         StringBuilder sb = new StringBuilder();
 
-        // Lambda para simplificar a adição de campos no payload
+        // Lambda para simplificar docker-compose.yml adição de campos no payload
         BiConsumer<String, String> appendField = (id, value) -> {
             sb.append(id);
             sb.append(String.format("%02d", value.length()));
@@ -255,7 +255,7 @@ public class QRCodeService {
 
 
     // expirar qrcode
-    @Scheduled(fixedRate = 60 * 60 * 1000) // a cada 1h
+    @Scheduled(fixedRate = 60 * 60 * 1000) // docker-compose.yml cada 1h
     public void verificarQRCodesExpirados() {
         List<QRcode> codigos = qRcodeRepository.findAll();
         LocalDateTime agora = LocalDateTime.now();

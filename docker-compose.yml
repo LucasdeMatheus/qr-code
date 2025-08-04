@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-container
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password_aqui
+      MYSQL_DATABASE: qrcode
+      MYSQL_USER: seu_usuario
+      MYSQL_PASSWORD: sua_senha
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  app:
+    image: qr-code # Usa a imagem que você acabou de buildar
+    container_name: app-container
+    depends_on:
+      - mysql
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/qrcode
+      SPRING_DATASOURCE_USERNAME: seu_usuario
+      SPRING_DATASOURCE_PASSWORD: sua_senha
+    restart: on-failure
+
+volumes:
+  mysql-data:
