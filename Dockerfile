@@ -7,4 +7,5 @@ WORKDIR /app
 COPY target/*.jar app.jar
 
 # Comando para executar o JAR
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["sh", "-c", "java -jar app.jar --server.port=${PORT:-8080}"]
+
