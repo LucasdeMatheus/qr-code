@@ -14,8 +14,6 @@ public class QRCodeController {
     @Autowired
     private QRCodeService qrCodeService;
 
-    @Autowired
-    private QRcodeRepository qRcodeRepository;
 
 
     // qrcode simples --------------------------------------------------------------------------------------------------

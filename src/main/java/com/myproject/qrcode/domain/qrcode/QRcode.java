@@ -13,8 +13,6 @@ public class QRcode {
     @Lob // Anotação para indicar dados binários grandes
     private byte[] QRcodeImg;
     private String qrcodeContent;
-    private LocalDateTime generationDate;
-    private LocalDateTime expirationDate;
     private Boolean isActive;
 
     public byte[] getQRcodeImg() {
@@ -31,22 +29,6 @@ public class QRcode {
 
     public void setQrcodeContent(String qrcodeContent) {
         this.qrcodeContent = qrcodeContent;
-    }
-
-    public LocalDateTime getGenerationDate() {
-        return generationDate;
-    }
-
-    public void setGenerationDate(LocalDateTime generationDate) {
-        this.generationDate = generationDate;
-    }
-
-    public LocalDateTime getExpirationDate() {
-        return expirationDate;
-    }
-
-    public void setExpirationDate(LocalDateTime expirationDate) {
-        this.expirationDate = expirationDate;
     }
 
     public Boolean getActive() {

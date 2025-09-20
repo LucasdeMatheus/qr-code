@@ -3,7 +3,6 @@ package com.myproject.qrcode.service;
 import com.google.zxing.*;
 import com.google.zxing.common.BitMatrix;
 import com.myproject.qrcode.domain.qrcode.QRcode;
-import com.myproject.qrcode.domain.qrcode.QRcodeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -21,8 +20,6 @@ import java.util.function.BiConsumer;
 @Service
 public class QRCodeService {
 
-    @Autowired
-    private QRcodeRepository qRcodeRepository;
 
     public byte[] generateQRCodeImage(
             String type,
@@ -84,7 +81,6 @@ public class QRCodeService {
         QRcode qRcode = new QRcode();
         qRcode.setActive(true);
         qRcode.setQRcodeImg(baos.toByteArray());
-        qRcode.setGenerationDate(LocalDateTime.now());
         qRcode.setQrcodeContent(content);
 
         return baos.toByteArray();
@@ -254,17 +250,5 @@ public class QRCodeService {
     }
 
 
-    // expirar qrcode
-    @Scheduled(fixedRate = 60 * 60 * 1000) // docker-compose.yml cada 1h
-    public void verificarQRCodesExpirados() {
-        List<QRcode> codigos = qRcodeRepository.findAll();
-        LocalDateTime agora = LocalDateTime.now();
 
-        for (QRcode codigo : codigos) {
-            if (codigo.getExpirationDate().isBefore(agora) && codigo.getActive()) {
-                codigo.setActive(false);
-                qRcodeRepository.save(codigo);
-            }
-        }
-    }
 }
