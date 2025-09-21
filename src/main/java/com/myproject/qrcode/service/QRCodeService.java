@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 
 @Service
+
 public class QRCodeService {
 
 
