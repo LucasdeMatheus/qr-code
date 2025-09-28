@@ -1,10 +1,9 @@
 package com.myproject.qrcode.service;
 
 import com.google.zxing.*;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
-import com.myproject.qrcode.domain.qrcode.QRcode;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
+import com.myproject.qrcode.domain.barcode.TypeCode;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
@@ -19,7 +18,7 @@ import java.util.function.BiConsumer;
 
 @Service
 
-public class QRCodeService {
+public class CodeGeneretorService {
 
 
     public byte[] generateQRCodeImage(
@@ -79,10 +78,6 @@ public class QRCodeService {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ImageIO.write(image, "PNG", baos);
 
-        QRcode qRcode = new QRcode();
-        qRcode.setActive(true);
-        qRcode.setQRcodeImg(baos.toByteArray());
-        qRcode.setQrcodeContent(content);
 
         return baos.toByteArray();
     }
@@ -249,6 +244,72 @@ public class QRCodeService {
 
         return wifiString;
     }
+
+    // codigo de barras
+    public byte[] generateBarcodeImage(String code, TypeCode typeCode) throws Exception {
+        int width = 300;
+        int height = 120;
+        int barcodeHeight = 100;
+
+        BarcodeFormat format;
+
+        switch (typeCode) {
+            case EAN13:
+                format = BarcodeFormat.EAN_13;
+                if (code.length() == 12) {
+                    code += calculateEAN13CheckDigit(code); // adiciona 13º dígito
+                } else if (code.length() != 13) {
+                    throw new IllegalArgumentException("EAN-13 precisa ter 12 ou 13 dígitos");
+                }
+                break;
+            case CODE128:
+            default:
+                format = BarcodeFormat.CODE_128;
+                break;
+        }
+
+        BitMatrix bitMatrix = new MultiFormatWriter().encode(code, format, width, barcodeHeight);
+
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        Graphics2D graphics = image.createGraphics();
+
+        graphics.setColor(Color.WHITE);
+        graphics.fillRect(0, 0, width, height);
+
+        graphics.setColor(Color.BLACK);
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < barcodeHeight; y++) {
+                if (bitMatrix.get(x, y)) {
+                    image.setRGB(x, y, Color.BLACK.getRGB());
+                }
+            }
+        }
+
+        graphics.setFont(new Font("Arial", Font.PLAIN, 14));
+        FontMetrics fm = graphics.getFontMetrics();
+        int textWidth = fm.stringWidth(code);
+        int xText = (width - textWidth) / 2;
+        int yText = barcodeHeight + fm.getAscent();
+        graphics.drawString(code, xText, yText);
+
+        graphics.dispose();
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(image, "PNG", baos);
+        return baos.toByteArray();
+    }
+
+    private String calculateEAN13CheckDigit(String code) {
+        int sum = 0;
+        for (int i = 0; i < code.length(); i++) {
+            int digit = Character.getNumericValue(code.charAt(i));
+            sum += (i % 2 == 0) ? digit : digit * 3;
+        }
+        int mod = sum % 10;
+        int checkDigit = (mod == 0) ? 0 : 10 - mod;
+        return String.valueOf(checkDigit);
+    }
+
 
 
 
